@@ -3,7 +3,6 @@
 Manages registration and retrieval of tool-specific configurators.
 """
 
-from typing import Dict, List, Optional
 
 from aurora.configurators.slash.base import SlashCommandConfigurator
 
@@ -14,7 +13,7 @@ class SlashCommandRegistry:
     Provides a singleton-like interface for managing tool configurators.
     """
 
-    _configurators: Dict[str, SlashCommandConfigurator] = {}
+    _configurators: dict[str, SlashCommandConfigurator] = {}
 
     @classmethod
     def register(cls, configurator: SlashCommandConfigurator) -> None:
@@ -30,7 +29,7 @@ class SlashCommandRegistry:
         cls._configurators[tool_id] = configurator
 
     @classmethod
-    def get(cls, tool_id: str) -> Optional[SlashCommandConfigurator]:
+    def get(cls, tool_id: str) -> SlashCommandConfigurator | None:
         """Get a configurator by tool ID.
 
         Args:
@@ -43,7 +42,7 @@ class SlashCommandRegistry:
         return cls._configurators.get(normalized_id)
 
     @classmethod
-    def get_all(cls) -> List[SlashCommandConfigurator]:
+    def get_all(cls) -> list[SlashCommandConfigurator]:
         """Get all registered configurators.
 
         Returns:
@@ -52,7 +51,7 @@ class SlashCommandRegistry:
         return list(cls._configurators.values())
 
     @classmethod
-    def get_available(cls) -> List[SlashCommandConfigurator]:
+    def get_available(cls) -> list[SlashCommandConfigurator]:
         """Get only available configurators.
 
         Returns:

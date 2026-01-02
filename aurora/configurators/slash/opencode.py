@@ -4,14 +4,12 @@ Configures slash commands for OpenCode in .opencode/command/ directory.
 OpenCode uses a different file structure with $ARGUMENTS placeholders.
 """
 
-from typing import Dict, Optional
 
 from aurora.configurators.slash.base import SlashCommandConfigurator
 from aurora.templates.slash_commands import get_command_body
 
-
 # File paths for each command
-FILE_PATHS: Dict[str, str] = {
+FILE_PATHS: dict[str, str] = {
     "plan": ".opencode/command/aurora-plan.md",
     "archive": ".opencode/command/aurora-archive.md",
     "implement": ".opencode/command/aurora-implement.md",
@@ -22,7 +20,7 @@ FILE_PATHS: Dict[str, str] = {
 }
 
 # Frontmatter for each command (OpenCode format with $ARGUMENTS)
-FRONTMATTER: Dict[str, str] = {
+FRONTMATTER: dict[str, str] = {
     "plan": """---
 description: Generate structured plans with agent delegation.
 ---
@@ -105,7 +103,7 @@ class OpenCodeSlashCommandConfigurator(SlashCommandConfigurator):
         """
         return FILE_PATHS[command_id]
 
-    def get_frontmatter(self, command_id: str) -> Optional[str]:
+    def get_frontmatter(self, command_id: str) -> str | None:
         """Get frontmatter for a slash command file.
 
         OpenCode uses $ARGUMENTS placeholder for command arguments.

@@ -11,7 +11,6 @@ This matches TypeScript behavior where MarkdownParser returns plain objects.
 
 import re
 from dataclasses import dataclass, field
-from typing import Optional
 
 from aurora.schemas.plan import ModificationOperation
 
@@ -65,7 +64,7 @@ class ParsedCapability:
     name: str
     overview: str
     requirements: list[ParsedRequirement] = field(default_factory=list)
-    metadata: Optional[ParsedCapabilityMetadata] = None
+    metadata: ParsedCapabilityMetadata | None = None
 
 
 @dataclass
@@ -78,9 +77,9 @@ class ParsedModification:
     capability: str
     operation: ModificationOperation
     description: str
-    requirement: Optional[ParsedRequirement] = None
-    requirements: Optional[list[ParsedRequirement]] = None
-    rename: Optional[dict] = None  # {from: str, to: str}
+    requirement: ParsedRequirement | None = None
+    requirements: list[ParsedRequirement] | None = None
+    rename: dict[str, str] | None = None  # {from: str, to: str}
 
 
 @dataclass
@@ -102,7 +101,7 @@ class ParsedPlan:
     why: str
     what_changes: str
     modifications: list[ParsedModification] = field(default_factory=list)
-    metadata: Optional[ParsedPlanMetadata] = None
+    metadata: ParsedPlanMetadata | None = None
 
 
 class MarkdownParser:
@@ -272,7 +271,7 @@ class MarkdownParser:
 
     def _find_section(
         self, sections: list[Section], title: str
-    ) -> Optional[Section]:
+    ) -> Section | None:
         """Find a section by title (case-insensitive).
 
         Args:

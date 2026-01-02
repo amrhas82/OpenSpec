@@ -4,8 +4,6 @@ Defines markers, directory names, and AI tool options.
 """
 
 from dataclasses import dataclass
-from typing import List, Optional
-
 
 # Directory name for Aurora planning
 AURORA_DIR_NAME = "aurora"
@@ -31,11 +29,11 @@ class AIToolOption:
     name: str
     value: str
     available: bool
-    success_label: Optional[str] = None
+    success_label: str | None = None
 
 
 # Available AI coding tools
-AI_TOOLS: List[AIToolOption] = [
+AI_TOOLS: list[AIToolOption] = [
     AIToolOption("Amazon Q Developer", "amazon-q", True, "Amazon Q Developer"),
     AIToolOption("Antigravity", "antigravity", True, "Antigravity"),
     AIToolOption("Auggie (Augment CLI)", "auggie", True, "Auggie"),
@@ -73,4 +71,4 @@ class AuroraConfig:
         ai_tools: List of AI tool IDs to configure
     """
 
-    ai_tools: List[str]
+    ai_tools: list[str]

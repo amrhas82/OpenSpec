@@ -8,7 +8,6 @@ Full configurator support (Phase 7) to be added later.
 """
 
 from pathlib import Path
-from typing import Optional
 
 from aurora.templates.agents import AGENTS_TEMPLATE
 

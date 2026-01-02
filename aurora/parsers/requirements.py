@@ -10,7 +10,6 @@ from markdown files, including delta (modification) spec parsing.
 
 import re
 from dataclasses import dataclass, field
-from typing import Optional
 
 
 @dataclass
@@ -49,8 +48,8 @@ class ModificationPlan:
     added: list[RequirementBlock] = field(default_factory=list)
     modified: list[RequirementBlock] = field(default_factory=list)
     removed: list[str] = field(default_factory=list)  # requirement names
-    renamed: list[dict] = field(default_factory=list)  # {from, to}
-    section_presence: dict = field(default_factory=lambda: {
+    renamed: list[dict[str, str]] = field(default_factory=list)  # {from, to}
+    section_presence: dict[str, bool] = field(default_factory=lambda: {
         "added": False,
         "modified": False,
         "removed": False,
@@ -325,7 +324,7 @@ def _parse_removed_names(section_body: str) -> list[str]:
     return names
 
 
-def _parse_renamed_pairs(section_body: str) -> list[dict]:
+def _parse_renamed_pairs(section_body: str) -> list[dict[str, str]]:
     """Parse rename pairs from a RENAMED section.
 
     Format:
@@ -341,9 +340,9 @@ def _parse_renamed_pairs(section_body: str) -> list[dict]:
     if not section_body:
         return []
 
-    pairs: list[dict] = []
+    pairs: list[dict[str, str]] = []
     lines = _normalize_line_endings(section_body).split("\n")
-    current: dict = {}
+    current: dict[str, str] = {}
 
     for line in lines:
         from_match = re.match(

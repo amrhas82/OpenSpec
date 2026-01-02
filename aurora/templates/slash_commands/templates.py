@@ -4,7 +4,6 @@ Each template provides instructions for AI coding tools on how to execute
 the corresponding Aurora command.
 """
 
-from typing import Dict
 
 # Base guardrails for all commands
 BASE_GUARDRAILS = """**Guardrails**
@@ -116,7 +115,7 @@ This is an alias for `aur mem search "<query>"`.
 - Shows match scores"""
 
 # Command templates dictionary
-COMMAND_TEMPLATES: Dict[str, str] = {
+COMMAND_TEMPLATES: dict[str, str] = {
     "plan": PLAN_TEMPLATE,
     "archive": ARCHIVE_TEMPLATE,
     "implement": IMPLEMENT_TEMPLATE,

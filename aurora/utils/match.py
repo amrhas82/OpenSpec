@@ -3,7 +3,6 @@
 Provides Levenshtein distance and nearest match finding.
 """
 
-from typing import List
 
 
 def levenshtein(a: str, b: str) -> int:
@@ -45,7 +44,7 @@ def levenshtein(a: str, b: str) -> int:
     return dp[m][n]
 
 
-def nearest_matches(input_str: str, candidates: List[str], max: int = 5) -> List[str]:
+def nearest_matches(input_str: str, candidates: list[str], max: int = 5) -> list[str]:
     """Find nearest matches to input string from candidates.
 
     Uses Levenshtein distance to rank candidates by similarity.

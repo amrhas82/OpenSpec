@@ -12,15 +12,14 @@ Provides validation for:
 
 import re
 from pathlib import Path
-from typing import Optional
 
-from aurora.parsers.markdown import MarkdownParser, ParsedCapability
+from aurora.parsers.markdown import MarkdownParser, ParsedCapability, ParsedPlan
 from aurora.parsers.plan_parser import PlanParser
-from aurora.parsers.requirements import parse_modification_spec, normalize_requirement_name
+from aurora.parsers.requirements import normalize_requirement_name, parse_modification_spec
 from aurora.validation.constants import (
-    MIN_PURPOSE_LENGTH,
     MAX_REQUIREMENT_TEXT_LENGTH,
     MIN_MODIFICATION_DESCRIPTION_LENGTH,
+    MIN_PURPOSE_LENGTH,
     VALIDATION_MESSAGES,
 )
 from aurora.validation.types import (
@@ -190,7 +189,7 @@ class Validator:
         specs_dir = Path(plan_dir) / "specs"
         total_modifications = 0
         missing_header_specs: list[str] = []
-        empty_section_specs: list[dict] = []
+        empty_section_specs: list[dict[str, str | list[str]]] = []
 
         try:
             if not specs_dir.exists():
@@ -216,7 +215,7 @@ class Validator:
 
                 try:
                     content = spec_file.read_text()
-                except (IOError, OSError):
+                except OSError:
                     continue
 
                 plan = parse_modification_spec(content)
@@ -405,7 +404,7 @@ class Validator:
                             message=f'RENAMED TO collides with ADDED for "{rename["to"]}"',
                         ))
 
-        except (IOError, OSError):
+        except OSError:
             # If specs dir can't be read, treat as no modifications
             pass
 
@@ -413,9 +412,9 @@ class Validator:
         for spec in empty_section_specs:
             issues.append(ValidationIssue(
                 level=ValidationLevel.ERROR,
-                path=spec["path"],
+                path=str(spec["path"]),
                 message=(
-                    f"Delta sections {self._format_section_list(spec['sections'])} were found, "
+                    f"Delta sections {self._format_section_list(list(spec['sections']))} were found, "
                     f"but no requirement entries parsed. Ensure each section includes at least one "
                     f'"### Requirement:" block (REMOVED may use bullet list syntax).'
                 ),
@@ -504,7 +503,7 @@ class Validator:
 
         return issues
 
-    def _validate_plan_schema(self, plan) -> list[ValidationIssue]:
+    def _validate_plan_schema(self, plan: ParsedPlan) -> list[ValidationIssue]:
         """Validate plan against schema rules.
 
         Args:
@@ -524,7 +523,7 @@ class Validator:
             ))
 
         # Why validation (length check)
-        from aurora.validation.constants import MIN_WHY_SECTION_LENGTH, MAX_WHY_SECTION_LENGTH
+        from aurora.validation.constants import MAX_WHY_SECTION_LENGTH, MIN_WHY_SECTION_LENGTH
         if len(plan.why) < MIN_WHY_SECTION_LENGTH:
             issues.append(ValidationIssue(
                 level=ValidationLevel.ERROR,
@@ -593,7 +592,7 @@ class Validator:
 
         return issues
 
-    def _apply_plan_rules(self, plan, content: str) -> list[ValidationIssue]:
+    def _apply_plan_rules(self, plan: ParsedPlan, content: str) -> list[ValidationIssue]:
         """Apply additional validation rules to plan.
 
         Args:
@@ -697,7 +696,7 @@ class Validator:
 
         return ValidationReport(valid=valid, issues=issues)
 
-    def _extract_requirement_text(self, block_raw: str) -> Optional[str]:
+    def _extract_requirement_text(self, block_raw: str) -> str | None:
         """Extract requirement text from block, skipping metadata.
 
         Args:

@@ -7,10 +7,9 @@ for CLI invocation. It handles:
 - Validating plans (with strict mode)
 """
 
+import builtins
 import json
-import os
 from pathlib import Path
-from typing import List, Optional
 
 from aurora.parsers.plan_parser import PlanParser
 from aurora.validation.validator import Validator
@@ -24,13 +23,13 @@ class PlanCommand:
     TASK_PATTERN = r"^[-*]\s+\[[\sx]\]"
     COMPLETED_TASK_PATTERN = r"^[-*]\s+\[x\]"
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize PlanCommand."""
         pass
 
     def show(
         self,
-        plan_name: Optional[str] = None,
+        plan_name: str | None = None,
         json_output: bool = False,
         modifications_only: bool = False,
     ) -> str:
@@ -145,7 +144,7 @@ class PlanCommand:
                         }
                     )
 
-            sorted_details = sorted(plan_details, key=lambda x: x["id"])
+            sorted_details = sorted(plan_details, key=lambda x: str(x["id"]))
             return json.dumps(sorted_details, indent=2)
         else:
             if len(plans) == 0:
@@ -187,7 +186,7 @@ class PlanCommand:
             return "\n".join(lines)
 
     def validate(
-        self, plan_name: Optional[str] = None, strict: bool = False, json_output: bool = False
+        self, plan_name: str | None = None, strict: bool = False, json_output: bool = False
     ) -> str:
         """Validate a plan.
 
@@ -254,7 +253,7 @@ class PlanCommand:
 
                 return "\n".join(lines)
 
-    def _get_active_plans(self, plans_path: Path) -> List[str]:
+    def _get_active_plans(self, plans_path: Path) -> builtins.list[str]:
         """Get list of active plan IDs.
 
         Args:
@@ -294,7 +293,7 @@ class PlanCommand:
         match = re.search(r"^#\s+(?:Plan:\s+)?(.+)$", content, re.IGNORECASE | re.MULTILINE)
         return match.group(1).strip() if match else plan_name
 
-    def _count_tasks(self, content: str) -> dict:
+    def _count_tasks(self, content: str) -> dict[str, int]:
         """Count tasks in content.
 
         Args:

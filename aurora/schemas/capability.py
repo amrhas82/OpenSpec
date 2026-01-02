@@ -6,11 +6,10 @@ Zod → Pydantic translation.
 Terminology: spec→capability
 """
 
-from typing import Annotated, Optional
+from typing import Annotated, Any
 
 from pydantic import BaseModel, BeforeValidator
 
-from aurora.schemas.base import Requirement
 from aurora.validation.constants import VALIDATION_MESSAGES
 
 
@@ -32,7 +31,7 @@ def validate_overview(v: str) -> str:
     return v
 
 
-def validate_requirements_list(v: list) -> list:
+def validate_requirements_list(v: list[Any]) -> list[Any]:
     """Validate requirements list has at least one item."""
     if not v or len(v) == 0:
         raise ValueError(VALIDATION_MESSAGES.CAPABILITY_NO_REQUIREMENTS)
@@ -42,7 +41,7 @@ def validate_requirements_list(v: list) -> list:
 # Type aliases with validators
 CapabilityName = Annotated[str, BeforeValidator(validate_capability_name)]
 Overview = Annotated[str, BeforeValidator(validate_overview)]
-RequirementsList = Annotated[list, BeforeValidator(validate_requirements_list)]
+RequirementsList = Annotated[list[Any], BeforeValidator(validate_requirements_list)]
 
 
 class CapabilityMetadata(BaseModel):
@@ -50,7 +49,7 @@ class CapabilityMetadata(BaseModel):
 
     version: str = "1.0.0"
     format: str = "aurora-capability"  # Was 'openspec'
-    source_path: Optional[str] = None
+    source_path: str | None = None
 
 
 class Capability(BaseModel):
@@ -62,4 +61,4 @@ class Capability(BaseModel):
     name: CapabilityName
     overview: Overview  # Was 'overview' in TS, maps to 'Purpose' section
     requirements: RequirementsList
-    metadata: Optional[CapabilityMetadata] = None
+    metadata: CapabilityMetadata | None = None

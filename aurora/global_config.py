@@ -8,8 +8,7 @@ import json
 import os
 import platform as platform_module
 from pathlib import Path
-from typing import Any, Dict, Optional
-
+from typing import Any
 
 # Constants
 GLOBAL_CONFIG_DIR_NAME = "aurora"
@@ -17,7 +16,7 @@ GLOBAL_CONFIG_FILE_NAME = "config.json"
 GLOBAL_DATA_DIR_NAME = "aurora"
 
 # Default configuration
-DEFAULT_CONFIG: Dict[str, Any] = {"feature_flags": {}}
+DEFAULT_CONFIG: dict[str, Any] = {"feature_flags": {}}
 
 
 def get_global_config_dir() -> Path:
@@ -80,7 +79,7 @@ def get_global_data_dir() -> Path:
     return Path.home() / ".local" / "share" / GLOBAL_DATA_DIR_NAME
 
 
-def get_global_config() -> Dict[str, Any]:
+def get_global_config() -> dict[str, Any]:
     """Get the global configuration.
 
     Reads from the global config file, creating it with defaults if it doesn't exist.
@@ -102,14 +101,14 @@ def get_global_config() -> Dict[str, Any]:
     # Read existing config
     try:
         with config_file.open("r", encoding="utf-8") as f:
-            config = json.load(f)
+            config: dict[str, Any] = json.load(f)
         return config
-    except (json.JSONDecodeError, IOError):
+    except (OSError, json.JSONDecodeError):
         # If config is corrupt, return defaults
         return DEFAULT_CONFIG.copy()
 
 
-def save_global_config(config: Dict[str, Any]) -> None:
+def save_global_config(config: dict[str, Any]) -> None:
     """Save the global configuration.
 
     Args:

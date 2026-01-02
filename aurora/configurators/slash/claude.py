@@ -3,14 +3,12 @@
 Configures slash commands for Claude Code in .claude/commands/aur/ directory.
 """
 
-from typing import Dict, Optional
 
 from aurora.configurators.slash.base import SlashCommandConfigurator
 from aurora.templates.slash_commands import get_command_body
 
-
 # File paths for each command
-FILE_PATHS: Dict[str, str] = {
+FILE_PATHS: dict[str, str] = {
     "plan": ".claude/commands/aur/plan.md",
     "archive": ".claude/commands/aur/archive.md",
     "implement": ".claude/commands/aur/implement.md",
@@ -21,7 +19,7 @@ FILE_PATHS: Dict[str, str] = {
 }
 
 # Frontmatter for each command
-FRONTMATTER: Dict[str, str] = {
+FRONTMATTER: dict[str, str] = {
     "plan": """---
 name: Aurora: Plan
 description: Generate structured plans with agent delegation
@@ -95,7 +93,7 @@ class ClaudeSlashCommandConfigurator(SlashCommandConfigurator):
         """
         return FILE_PATHS[command_id]
 
-    def get_frontmatter(self, command_id: str) -> Optional[str]:
+    def get_frontmatter(self, command_id: str) -> str | None:
         """Get frontmatter for a slash command file.
 
         Args:

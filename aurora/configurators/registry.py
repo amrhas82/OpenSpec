@@ -3,7 +3,6 @@
 Central registry that manages all available tool configurators.
 """
 
-from typing import Dict, List, Optional
 
 from aurora.configurators.base import ToolConfigurator
 
@@ -15,7 +14,7 @@ class ToolRegistry:
     and provides methods to query and retrieve them.
     """
 
-    _tools: Dict[str, ToolConfigurator] = {}
+    _tools: dict[str, ToolConfigurator] = {}
 
     @classmethod
     def register(cls, tool: ToolConfigurator) -> None:
@@ -28,7 +27,7 @@ class ToolRegistry:
         cls._tools[tool_id] = tool
 
     @classmethod
-    def get(cls, tool_id: str) -> Optional[ToolConfigurator]:
+    def get(cls, tool_id: str) -> ToolConfigurator | None:
         """Get a tool configurator by ID.
 
         Args:
@@ -40,7 +39,7 @@ class ToolRegistry:
         return cls._tools.get(tool_id)
 
     @classmethod
-    def get_all(cls) -> List[ToolConfigurator]:
+    def get_all(cls) -> list[ToolConfigurator]:
         """Get all registered tool configurators.
 
         Returns:
@@ -49,7 +48,7 @@ class ToolRegistry:
         return list(cls._tools.values())
 
     @classmethod
-    def get_available(cls) -> List[ToolConfigurator]:
+    def get_available(cls) -> list[ToolConfigurator]:
         """Get all available tool configurators.
 
         Returns:

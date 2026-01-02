@@ -6,9 +6,12 @@ Zod → Pydantic translation.
 Terminology: openspec→aurora
 """
 
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated, Any
 
 from pydantic import BaseModel, BeforeValidator, Field
+
+if TYPE_CHECKING:
+    pass
 
 from aurora.validation.constants import VALIDATION_MESSAGES
 
@@ -40,7 +43,7 @@ def validate_requirement_text(v: str) -> str:
     return v
 
 
-def validate_scenarios_list(v: list) -> list:
+def validate_scenarios_list(v: list[Any]) -> list[Any]:
     """Validate scenarios list has at least one item."""
     if not v or len(v) == 0:
         raise ValueError(VALIDATION_MESSAGES.REQUIREMENT_NO_SCENARIOS)
@@ -50,7 +53,7 @@ def validate_scenarios_list(v: list) -> list:
 # Type aliases with validators
 ScenarioText = Annotated[str, BeforeValidator(validate_scenario_text)]
 RequirementText = Annotated[str, BeforeValidator(validate_requirement_text)]
-ScenariosList = Annotated[list, BeforeValidator(validate_scenarios_list)]
+ScenariosList = Annotated[list["Scenario"], BeforeValidator(validate_scenarios_list)]
 
 
 class Scenario(BaseModel):

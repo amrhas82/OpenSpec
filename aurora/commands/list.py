@@ -4,11 +4,11 @@ List command for Aurora planning system.
 Ported from OpenSpec src/core/list.ts
 """
 
-from pathlib import Path
-from typing import Optional, Dict, Any, List, Literal
+import json
 from dataclasses import dataclass
 from datetime import datetime
-import json
+from pathlib import Path
+from typing import Any, Literal
 
 
 @dataclass
@@ -34,7 +34,7 @@ class ListCommand:
         self,
         target_path: str = ".",
         mode: Literal['changes', 'specs'] = 'changes',
-        options: Optional[Dict[str, Any]] = None
+        options: dict[str, Any] | None = None
     ) -> None:
         """
         Execute the list command.
@@ -92,7 +92,7 @@ class ListCommand:
             return
 
         # Collect information about each change
-        changes: List[ChangeInfo] = []
+        changes: list[ChangeInfo] = []
 
         for change_dir in change_dirs:
             progress = self._get_task_progress(changes_dir, change_dir)
@@ -159,7 +159,7 @@ class ListCommand:
             print("No specs found.")
             return
 
-        specs: List[SpecInfo] = []
+        specs: list[SpecInfo] = []
         for spec_id in spec_dirs:
             spec_path = specs_dir / spec_id / "spec.md"
             try:
@@ -188,7 +188,7 @@ class ListCommand:
         self,
         changes_dir: Path,
         change_name: str
-    ) -> Dict[str, int]:
+    ) -> dict[str, int]:
         """Get task progress for a change."""
         tasks_path = changes_dir / change_name / "tasks.md"
 
@@ -229,7 +229,7 @@ class ListCommand:
         Get the most recent modification time of any file in a directory (recursive).
         Falls back to the directory's own mtime if no files are found.
         """
-        latest: Optional[datetime] = None
+        latest: datetime | None = None
 
         def walk(current_dir: Path) -> None:
             nonlocal latest

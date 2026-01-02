@@ -5,10 +5,9 @@ and reading markdown files.
 """
 
 from pathlib import Path
-from typing import Optional
 
 
-def find_project_root(start_path: Optional[Path] = None) -> Optional[Path]:
+def find_project_root(start_path: Path | None = None) -> Path | None:
     """Find the project root by looking for aurora/ directory.
 
     Args:

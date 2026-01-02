@@ -4,18 +4,18 @@ Archive command for Aurora planning system.
 Ported from OpenSpec src/core/archive.ts
 """
 
-from pathlib import Path
-from datetime import datetime
-from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+from typing import Any
 
-from aurora.validation.validator import Validator
 from aurora.parsers.requirements import (
-    parse_modification_spec,
+    RequirementBlock,
     extract_requirements_section,
     normalize_requirement_name,
-    RequirementBlock,
+    parse_modification_spec,
 )
+from aurora.validation.validator import Validator
 
 
 @dataclass
@@ -42,12 +42,12 @@ class ArchiveCommand:
 
     def execute(
         self,
-        plan_name: Optional[str] = None,
+        plan_name: str | None = None,
         target_path: str = ".",
         yes: bool = False,
         skip_specs: bool = False,
         no_validate: bool = False,
-        validate: Optional[bool] = None,
+        validate: bool | None = None,
     ) -> None:
         """
         Execute the archive command.
@@ -274,7 +274,7 @@ class ArchiveCommand:
 
         print(f"Change '{plan_name}' archived as '{archive_name}'.")
 
-    def _select_plan(self, changes_dir: Path) -> Optional[str]:
+    def _select_plan(self, changes_dir: Path) -> str | None:
         """Select a plan interactively."""
         # Get all directories in changes (excluding archive)
         entries = list(changes_dir.iterdir())
@@ -321,7 +321,7 @@ class ArchiveCommand:
 
     def _get_task_progress(
         self, changes_dir: Path, plan_id: str
-    ) -> Dict[str, int]:
+    ) -> dict[str, int]:
         """Get task progress for a plan."""
         tasks_path = changes_dir / plan_id / "tasks.md"
         if not tasks_path.exists():
@@ -341,7 +341,7 @@ class ArchiveCommand:
 
         return {"total": total, "completed": completed}
 
-    def _format_task_status(self, progress: Dict[str, int]) -> str:
+    def _format_task_status(self, progress: dict[str, int]) -> str:
         """Format task status string."""
         total = progress["total"]
         completed = progress["completed"]
@@ -354,9 +354,9 @@ class ArchiveCommand:
 
     def _find_spec_updates(
         self, change_dir: Path, main_specs_dir: Path
-    ) -> List[SpecUpdate]:
+    ) -> list[SpecUpdate]:
         """Find specs that need updating."""
-        updates = []
+        updates: list[SpecUpdate] = []
         change_specs_dir = change_dir / "specs"
 
         if not change_specs_dir.exists():
@@ -377,7 +377,7 @@ class ArchiveCommand:
 
     def _build_updated_spec(
         self, update: SpecUpdate, plan_name: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Build updated spec content."""
         # Read change spec content (delta-format expected)
         change_content = update.source.read_text()

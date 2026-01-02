@@ -5,10 +5,10 @@ Provides functions to detect if the current environment is interactive.
 
 import os
 import sys
-from typing import Any, Dict, Optional
+from typing import Any
 
 
-def is_interactive(options: Optional[Dict[str, Any]] = None) -> bool:
+def is_interactive(options: dict[str, Any] | None = None) -> bool:
     """Check if the current environment is interactive.
 
     Args:

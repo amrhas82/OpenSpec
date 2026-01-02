@@ -10,7 +10,6 @@ from the specs/ directory within a plan folder.
 
 import re
 from pathlib import Path
-from typing import Optional
 
 from aurora.parsers.markdown import (
     MarkdownParser,
@@ -18,7 +17,6 @@ from aurora.parsers.markdown import (
     ParsedPlan,
     ParsedPlanMetadata,
     ParsedRequirement,
-    ParsedScenario,
     Section,
 )
 from aurora.schemas.plan import ModificationOperation
@@ -120,11 +118,11 @@ class PlanParser(MarkdownParser):
                     content = spec_file.read_text()
                     spec_modifications = self._parse_spec_deltas(spec_name, content)
                     modifications.extend(spec_modifications)
-                except (IOError, OSError):
+                except OSError:
                     # Spec file couldn't be read, skip it
                     continue
 
-        except (IOError, OSError):
+        except OSError:
             # Specs directory couldn't be read
             return []
 
@@ -277,7 +275,7 @@ class PlanParser(MarkdownParser):
 
         return text
 
-    def _parse_renames(self, content: str) -> list[dict]:
+    def _parse_renames(self, content: str) -> list[dict[str, str]]:
         """Parse rename pairs from content.
 
         Format:
@@ -290,10 +288,10 @@ class PlanParser(MarkdownParser):
         Returns:
             List of rename dicts with 'from' and 'to' keys
         """
-        renames: list[dict] = []
+        renames: list[dict[str, str]] = []
         lines = self._normalize_content(content).split("\n")
 
-        current_rename: dict = {}
+        current_rename: dict[str, str] = {}
 
         for line in lines:
             from_match = re.match(

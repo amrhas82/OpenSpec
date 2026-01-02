@@ -6,7 +6,6 @@ Defines the interface that all tool-specific slash command configurators must im
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
 
 from aurora.config import AURORA_MARKERS
 
@@ -49,7 +48,7 @@ class SlashCommandConfigurator(ABC):
         """Whether this tool is available on the system."""
         ...
 
-    def get_targets(self) -> List[SlashCommandTarget]:
+    def get_targets(self) -> list[SlashCommandTarget]:
         """Get all slash command targets for this tool.
 
         Returns:
@@ -62,7 +61,7 @@ class SlashCommandConfigurator(ABC):
             for cmd_id in ALL_COMMANDS
         ]
 
-    def generate_all(self, project_path: str, aurora_dir: str) -> List[str]:
+    def generate_all(self, project_path: str, aurora_dir: str) -> list[str]:
         """Generate or update all slash command files.
 
         Args:
@@ -72,7 +71,7 @@ class SlashCommandConfigurator(ABC):
         Returns:
             List of created/updated file paths (relative to project_path)
         """
-        created_or_updated: List[str] = []
+        created_or_updated: list[str] = []
 
         for target in self.get_targets():
             body = self.get_body(target.command_id)
@@ -86,7 +85,7 @@ class SlashCommandConfigurator(ABC):
                 file_path.parent.mkdir(parents=True, exist_ok=True)
 
                 frontmatter = self.get_frontmatter(target.command_id)
-                sections: List[str] = []
+                sections: list[str] = []
 
                 if frontmatter:
                     sections.append(frontmatter.strip())
@@ -102,7 +101,7 @@ class SlashCommandConfigurator(ABC):
 
         return created_or_updated
 
-    def update_existing(self, project_path: str, aurora_dir: str) -> List[str]:
+    def update_existing(self, project_path: str, aurora_dir: str) -> list[str]:
         """Update existing slash command files only.
 
         Does not create new files.
@@ -114,7 +113,7 @@ class SlashCommandConfigurator(ABC):
         Returns:
             List of updated file paths (relative to project_path)
         """
-        updated: List[str] = []
+        updated: list[str] = []
 
         for target in self.get_targets():
             file_path = Path(project_path) / target.path
@@ -139,7 +138,7 @@ class SlashCommandConfigurator(ABC):
         ...
 
     @abstractmethod
-    def get_frontmatter(self, command_id: str) -> Optional[str]:
+    def get_frontmatter(self, command_id: str) -> str | None:
         """Get the frontmatter for a slash command file.
 
         Args:

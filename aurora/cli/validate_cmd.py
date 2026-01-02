@@ -6,7 +6,6 @@ It's a simpler wrapper than the full TypeScript version - focused on single-item
 
 import json
 from pathlib import Path
-from typing import Optional
 
 from aurora.validation.validator import Validator
 
@@ -14,7 +13,7 @@ from aurora.validation.validator import Validator
 class ValidateCommand:
     """CLI wrapper for validation operations."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize ValidateCommand."""
         pass
 

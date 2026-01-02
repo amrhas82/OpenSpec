@@ -4,9 +4,9 @@ View command for Aurora planning system.
 Ported from OpenSpec src/core/view.ts
 """
 
-from pathlib import Path
-from typing import List, Dict, Any
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
 
 from aurora.parsers.markdown import MarkdownParser
 
@@ -15,7 +15,7 @@ from aurora.parsers.markdown import MarkdownParser
 class ChangeInfo:
     """Information about a change with task progress."""
     name: str
-    progress: Dict[str, int]  # {'total': int, 'completed': int}
+    progress: dict[str, int]  # {'total': int, 'completed': int}
 
 
 @dataclass
@@ -103,16 +103,16 @@ class ViewCommand:
         print("\n" + "=" * 60)
         print("\nUse 'openspec list --changes' or 'openspec list --specs' for detailed views")
 
-    def _get_changes_data(self, openspec_dir: Path) -> Dict[str, List[Dict[str, Any]]]:
+    def _get_changes_data(self, openspec_dir: Path) -> dict[str, list[dict[str, Any]]]:
         """Get changes data categorized by status."""
         changes_dir = openspec_dir / "changes"
 
         if not changes_dir.exists():
             return {"draft": [], "active": [], "completed": []}
 
-        draft: List[Dict[str, Any]] = []
-        active: List[Dict[str, Any]] = []
-        completed: List[Dict[str, Any]] = []
+        draft: list[dict[str, Any]] = []
+        active: list[dict[str, Any]] = []
+        completed: list[dict[str, Any]] = []
 
         try:
             entries = list(changes_dir.iterdir())
@@ -137,7 +137,7 @@ class ViewCommand:
         draft.sort(key=lambda c: c["name"])
 
         # Sort active changes by completion percentage (ascending) and then by name
-        def sort_key(change: Dict[str, Any]) -> tuple:
+        def sort_key(change: dict[str, Any]) -> tuple[float, str]:
             progress = change["progress"]
             percentage = (
                 progress["completed"] / progress["total"]
@@ -151,14 +151,14 @@ class ViewCommand:
 
         return {"draft": draft, "active": active, "completed": completed}
 
-    def _get_specs_data(self, openspec_dir: Path) -> List[Dict[str, Any]]:
+    def _get_specs_data(self, openspec_dir: Path) -> list[dict[str, Any]]:
         """Get specifications data."""
         specs_dir = openspec_dir / "specs"
 
         if not specs_dir.exists():
             return []
 
-        specs: List[Dict[str, Any]] = []
+        specs: list[dict[str, Any]] = []
 
         try:
             entries = list(specs_dir.iterdir())
@@ -188,7 +188,7 @@ class ViewCommand:
 
         return specs
 
-    def _get_task_progress(self, changes_dir: Path, change_name: str) -> Dict[str, int]:
+    def _get_task_progress(self, changes_dir: Path, change_name: str) -> dict[str, int]:
         """Get task progress for a change."""
         tasks_path = changes_dir / change_name / "tasks.md"
 
@@ -215,8 +215,8 @@ class ViewCommand:
 
     def _display_summary(
         self,
-        changes_data: Dict[str, List[Dict[str, Any]]],
-        specs_data: List[Dict[str, Any]]
+        changes_data: dict[str, list[dict[str, Any]]],
+        specs_data: list[dict[str, Any]]
     ) -> None:
         """Display summary metrics."""
         total_changes = (

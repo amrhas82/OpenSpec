@@ -6,8 +6,6 @@ Parse and track task completion from tasks.md files.
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
-
 
 # Regex patterns for task checkboxes
 TASK_PATTERN = re.compile(r"^[-*]\s+\[[\sx]\]", re.IGNORECASE)
@@ -73,7 +71,7 @@ def get_task_progress_for_plan(plans_dir: str, plan_name: str) -> TaskProgress:
     try:
         content = tasks_path.read_text(encoding="utf-8")
         return count_tasks_from_content(content)
-    except (FileNotFoundError, IOError):
+    except (OSError, FileNotFoundError):
         return TaskProgress(total=0, completed=0)
 
 

@@ -4,10 +4,9 @@ Provides functions to discover plans and capabilities in the project.
 """
 
 from pathlib import Path
-from typing import List
 
 
-def get_active_plan_ids(base_path: Path = None) -> List[str]:
+def get_active_plan_ids(base_path: Path | None = None) -> list[str]:
     """Get list of active plan IDs.
 
     Args:
@@ -37,7 +36,7 @@ def get_active_plan_ids(base_path: Path = None) -> List[str]:
     return sorted(plans)
 
 
-def get_capability_ids(base_path: Path = None) -> List[str]:
+def get_capability_ids(base_path: Path | None = None) -> list[str]:
     """Get list of capability IDs.
 
     Args:

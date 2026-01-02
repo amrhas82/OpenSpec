@@ -4,9 +4,9 @@ This module provides the CapabilityCommand class for working with capabilities.
 Simplified version focused on core functionality.
 """
 
+import builtins
 import json
 from pathlib import Path
-from typing import List, Optional
 
 from aurora.parsers.markdown import MarkdownParser
 from aurora.validation.validator import Validator
@@ -17,12 +17,12 @@ class CapabilityCommand:
 
     CAPABILITIES_DIR = "aurora/capabilities"
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize CapabilityCommand."""
         pass
 
     def show(
-        self, capability_id: Optional[str] = None, json_output: bool = False
+        self, capability_id: str | None = None, json_output: bool = False
     ) -> str:
         """Show a capability.
 
@@ -114,7 +114,7 @@ class CapabilityCommand:
                         }
                     )
 
-            sorted_details = sorted(cap_details, key=lambda x: x["id"])
+            sorted_details = sorted(cap_details, key=lambda x: str(x["id"]))
             return json.dumps(sorted_details, indent=2)
         else:
             if len(capabilities) == 0:
@@ -176,7 +176,7 @@ class CapabilityCommand:
                     lines.append(f"{prefix} [{label}] {issue.path}: {issue.message}")
                 return "\n".join(lines)
 
-    def _get_capabilities(self, cap_base: Path) -> List[str]:
+    def _get_capabilities(self, cap_base: Path) -> builtins.list[str]:
         """Get list of capability IDs.
 
         Args:

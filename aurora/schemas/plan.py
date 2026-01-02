@@ -7,7 +7,7 @@ Terminology: change→plan, delta→modification, spec→capability
 """
 
 from enum import Enum
-from typing import Annotated, Optional
+from typing import Annotated
 
 from pydantic import BaseModel, BeforeValidator, Field
 
@@ -76,7 +76,7 @@ def validate_what_changes(v: str) -> str:
     return v
 
 
-def validate_modifications_list(v: list) -> list:
+def validate_modifications_list(v: list["Modification"]) -> list["Modification"]:
     """Validate modifications list has at least one item and not too many."""
     if not v or len(v) == 0:
         raise ValueError(VALIDATION_MESSAGES.PLAN_NO_MODIFICATIONS)
@@ -91,7 +91,7 @@ ModificationDescription = Annotated[str, BeforeValidator(validate_modification_d
 PlanName = Annotated[str, BeforeValidator(validate_plan_name)]
 WhySection = Annotated[str, BeforeValidator(validate_why_section)]
 WhatChanges = Annotated[str, BeforeValidator(validate_what_changes)]
-ModificationsList = Annotated[list, BeforeValidator(validate_modifications_list)]
+ModificationsList = Annotated[list["Modification"], BeforeValidator(validate_modifications_list)]
 
 
 class RenameInfo(BaseModel):
@@ -112,9 +112,9 @@ class Modification(BaseModel):
     capability: CapabilityName  # Was 'spec'
     operation: ModificationOperation
     description: ModificationDescription
-    requirement: Optional[Requirement] = None
-    requirements: Optional[list[Requirement]] = None
-    rename: Optional[RenameInfo] = None
+    requirement: Requirement | None = None
+    requirements: list[Requirement] | None = None
+    rename: RenameInfo | None = None
 
 
 class PlanMetadata(BaseModel):
@@ -122,7 +122,7 @@ class PlanMetadata(BaseModel):
 
     version: str = "1.0.0"
     format: str = "aurora-plan"  # Was 'openspec-change'
-    source_path: Optional[str] = None
+    source_path: str | None = None
 
 
 class Plan(BaseModel):
@@ -135,4 +135,4 @@ class Plan(BaseModel):
     why: WhySection
     what_changes: WhatChanges  # Was 'whatChanges'
     modifications: ModificationsList  # Was 'deltas'
-    metadata: Optional[PlanMetadata] = None
+    metadata: PlanMetadata | None = None

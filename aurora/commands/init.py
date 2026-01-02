@@ -8,11 +8,9 @@ This version creates the core OpenSpec directory structure and basic files.
 """
 
 from pathlib import Path
-from typing import Optional
 
 from aurora.templates.agents import AGENTS_TEMPLATE
 from aurora.templates.project import PROJECT_TEMPLATE
-
 
 # OpenSpec managed block markers
 OPENSPEC_START = "<!-- OPENSPEC:START -->"
@@ -76,10 +74,10 @@ class InitCommand:
             print("\\nOpenSpec initialized successfully")
             print("Created directory structure and core files")
 
-        print(f"\\nNext steps:")
-        print(f"  - Review openspec/AGENTS.md for workflow instructions")
-        print(f"  - Customize openspec/project.md with your project context")
-        print(f"  - Use your AI assistant with @/openspec/AGENTS.md reference")
+        print("\\nNext steps:")
+        print("  - Review openspec/AGENTS.md for workflow instructions")
+        print("  - Customize openspec/project.md with your project context")
+        print("  - Use your AI assistant with @/openspec/AGENTS.md reference")
 
     def _create_directory_structure(self, openspec_dir: Path) -> None:
         """Create OpenSpec directory structure."""

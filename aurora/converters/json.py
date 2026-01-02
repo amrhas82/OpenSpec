@@ -5,7 +5,7 @@ Converts capability and plan markdown files to JSON format.
 
 import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from aurora.parsers.markdown import MarkdownParser
 from aurora.parsers.plan_parser import PlanParser
@@ -29,7 +29,7 @@ class JsonConverter:
 
         capability = parser.parse_capability(capability_name)
 
-        json_capability: Dict[str, Any] = {
+        json_capability: dict[str, Any] = {
             "name": capability.name,
             "overview": capability.overview or "",
             "requirements": [
@@ -62,7 +62,7 @@ class JsonConverter:
         parser = PlanParser(content, plan_dir)
         plan = parser.parse_plan_with_modifications(plan_name)
 
-        json_plan: Dict[str, Any] = {
+        json_plan: dict[str, Any] = {
             "name": plan.name,
             "why": plan.why or "",
             "what_changes": plan.what_changes or "",

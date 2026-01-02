@@ -6,7 +6,6 @@ TypeScript interfaces → Pydantic models.
 """
 
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, computed_field
 
@@ -28,8 +27,8 @@ class ValidationIssue(BaseModel):
     level: ValidationLevel
     path: str
     message: str
-    line: Optional[int] = None
-    column: Optional[int] = None
+    line: int | None = None
+    column: int | None = None
 
 
 class ValidationSummary(BaseModel):
@@ -49,7 +48,7 @@ class ValidationReport(BaseModel):
     valid: bool
     issues: list[ValidationIssue]
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def summary(self) -> ValidationSummary:
         """Auto-calculate summary from issues."""
