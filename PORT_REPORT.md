@@ -5,6 +5,7 @@
 **Branch**: `refactored`
 **Target**: Aurora Planning System (Python)
 **Started**: 2026-01-02
+**Last Updated**: 2026-01-02
 
 ---
 
@@ -12,10 +13,10 @@
 
 | Metric | Value |
 |--------|-------|
-| Total OpenSpec Lines | 11,396 (source) + 12,053 (tests) = 23,449 |
-| Lines to Port | ~4,600 (source) + ~5,000 (tests) = ~9,600 |
-| Lines Skipped | ~6,800 (source) + ~7,000 (tests) = ~13,800 |
-| Port Percentage | ~41% |
+| Total OpenSpec Lines | ~8,659 (source to consider) |
+| Lines to Port | ~5,800 (source) |
+| Lines Skipped | ~2,800 (completions, artifact-graph, slash configurators) |
+| Port Percentage | ~67% of considered source |
 
 ---
 
@@ -31,6 +32,9 @@
 | `Change` | `Plan` | Class/type name |
 | `Spec` | `Capability` | Class/type name |
 | `Delta` | `Modification` | Class/type name |
+| `openspec/` dir | `aurora/` dir | Project directory |
+| `changes/` | `plans/` | Plans directory |
+| `specs/` | `capabilities/` | Capabilities directory |
 
 ---
 
@@ -40,138 +44,141 @@
 |-----------------|--------|-------|
 | Zod | Pydantic | Schema validation |
 | Commander.js | Click | CLI framework |
-| Inquirer.js | Rich.prompt | Interactive prompts |
+| Inquirer.js | Rich.prompt / questionary | Interactive prompts |
 | Chalk | Rich.console | Terminal colors |
+| ora | Rich.progress | Spinners/progress |
 | fs/path | pathlib | File system |
 | vitest | pytest | Testing |
 | async/await | async/await | Same pattern |
 
 ---
 
-## Ported Modules
+## COMPLETE File Mapping: TO PORT
 
-### ✅ Core Validation (CRITICAL)
+### Phase 1: Schemas (76 lines)
 
-| Source File | Lines | Target File | Status |
-|-------------|-------|-------------|--------|
-| `src/core/validation/validator.ts` | 449 | `aurora/validation/validator.py` | 🔲 TODO |
-| `src/core/validation/constants.ts` | 48 | `aurora/validation/constants.py` | 🔲 TODO |
-| `src/core/validation/types.ts` | 18 | `aurora/validation/types.py` | 🔲 TODO |
+| Source File | Lines | Target File | Status | Key Items |
+|-------------|-------|-------------|--------|-----------|
+| `src/core/schemas/base.schema.ts` | 19 | `aurora/schemas/base.py` | 🔲 TODO | `Scenario`, `Requirement` |
+| `src/core/schemas/change.schema.ts` | 41 | `aurora/schemas/plan.py` | 🔲 TODO | `ModificationOperation`, `Modification`, `Plan` |
+| `src/core/schemas/spec.schema.ts` | 16 | `aurora/schemas/capability.py` | 🔲 TODO | `Capability` |
 
-**Key Functions to Port:**
+### Phase 2: Validation (515 lines)
+
+| Source File | Lines | Target File | Status | Key Items |
+|-------------|-------|-------------|--------|-----------|
+| `src/core/validation/constants.ts` | 48 | `aurora/validation/constants.py` | 🔲 TODO | `VALIDATION_MESSAGES`, thresholds |
+| `src/core/validation/types.ts` | 18 | `aurora/validation/types.py` | 🔲 TODO | `ValidationIssue`, `ValidationReport` |
+| `src/core/validation/validator.ts` | 449 | `aurora/validation/validator.py` | 🔲 TODO | `Validator` class |
+
+**Validator Key Functions:**
 - `validateSpec()` → `validate_capability()`
 - `validateChange()` → `validate_plan()`
-- `validateChangeDeltaSpecs()` → `validate_plan_delta_specs()`
+- `validateChangeDeltaSpecs()` → `validate_plan_modification_specs()`
 - `applySpecRules()` → `_apply_capability_rules()`
 - `applyChangeRules()` → `_apply_plan_rules()`
 - `extractRequirementText()` → `_extract_requirement_text()`
 - `containsShallOrMust()` → `_contains_shall_or_must()`
 - `countScenarios()` → `_count_scenarios()`
 
-### ✅ Parsers (CRITICAL)
+### Phase 3: Parsers (703 lines)
 
-| Source File | Lines | Target File | Status |
-|-------------|-------|-------------|--------|
-| `src/core/parsers/markdown-parser.ts` | 236 | `aurora/parsers/markdown.py` | 🔲 TODO |
-| `src/core/parsers/change-parser.ts` | 233 | `aurora/parsers/plan.py` | 🔲 TODO |
-| `src/core/parsers/requirement-blocks.ts` | 234 | `aurora/parsers/requirements.py` | 🔲 TODO |
+| Source File | Lines | Target File | Status | Key Items |
+|-------------|-------|-------------|--------|-----------|
+| `src/core/parsers/markdown-parser.ts` | 236 | `aurora/parsers/markdown.py` | 🔲 TODO | `MarkdownParser` class |
+| `src/core/parsers/change-parser.ts` | 233 | `aurora/parsers/plan.py` | 🔲 TODO | `PlanParser` class |
+| `src/core/parsers/requirement-blocks.ts` | 234 | `aurora/parsers/requirements.py` | 🔲 TODO | `parse_modification_spec()` |
 
-**Key Functions to Port:**
-- `MarkdownParser` class → `MarkdownParser` class
-- `parseDeltaSpec()` → `parse_delta_spec()`
+**Parser Key Functions:**
+- `MarkdownParser.parse()` → `MarkdownParser.parse()`
+- `MarkdownParser.extractSections()` → `MarkdownParser.extract_sections()`
+- `parseDeltaSpec()` → `parse_modification_spec()`
 - `extractRequirementsSection()` → `extract_requirements_section()`
 - `normalizeRequirementName()` → `normalize_requirement_name()`
 
-### ✅ Schemas
+### Phase 4: Core Commands (2,151 lines)
 
-| Source File | Lines | Target File | Status |
-|-------------|-------|-------------|--------|
-| `src/core/schemas/base.schema.ts` | 19 | `aurora/schemas/base.py` | 🔲 TODO |
-| `src/core/schemas/change.schema.ts` | 41 | `aurora/schemas/plan.py` | 🔲 TODO |
-| `src/core/schemas/spec.schema.ts` | 16 | `aurora/schemas/capability.py` | 🔲 TODO |
+| Source File | Lines | Target File | Status | Key Items |
+|-------------|-------|-------------|--------|-----------|
+| `src/core/archive.ts` | 625 | `aurora/commands/archive.py` | 🔲 TODO | `archive_plan()` |
+| `src/core/init.ts` | 986 | `aurora/commands/init.py` | 🔲 TODO | `init_project()` |
+| `src/core/list.ts` | 193 | `aurora/commands/list.py` | 🔲 TODO | `list_items()` |
+| `src/core/view.ts` | 218 | `aurora/commands/view.py` | 🔲 TODO | `view_dashboard()` |
+| `src/core/update.ts` | 129 | `aurora/commands/update.py` | 🔲 TODO | `update_instructions()` |
 
-**Zod → Pydantic Mapping:**
-```typescript
-// TypeScript (Zod)
-const ScenarioSchema = z.object({
-  rawText: z.string().min(1, VALIDATION_MESSAGES.SCENARIO_EMPTY),
-});
-```
-```python
-# Python (Pydantic)
-class Scenario(BaseModel):
-    raw_text: str = Field(min_length=1)
-```
+### Phase 5: CLI Command Classes (1,240 lines)
 
-### ✅ Commands
+| Source File | Lines | Target File | Status | Key Items |
+|-------------|-------|-------------|--------|-----------|
+| `src/commands/change.ts` | 292 | `aurora/cli/plan_cmd.py` | 🔲 TODO | `PlanCommand` class |
+| `src/commands/validate.ts` | 326 | `aurora/cli/validate_cmd.py` | 🔲 TODO | `ValidateCommand` class |
+| `src/commands/spec.ts` | 251 | `aurora/cli/capability_cmd.py` | 🔲 TODO | `CapabilityCommand` class |
+| `src/commands/config.ts` | 233 | `aurora/cli/config_cmd.py` | 🔲 TODO | `ConfigCommand` class |
+| `src/commands/show.ts` | 138 | `aurora/cli/show_cmd.py` | 🔲 TODO | `ShowCommand` class |
 
-| Source File | Lines | Target File | Status |
-|-------------|-------|-------------|--------|
-| `src/core/archive.ts` | 625 | `aurora/archive.py` | 🔲 TODO |
-| `src/core/init.ts` | 986 | `aurora/init.py` | 🔲 TODO |
-| `src/core/list.ts` | 193 | `aurora/list.py` | 🔲 TODO |
-| `src/core/view.ts` | 218 | `aurora/view.py` | 🔲 TODO |
-| `src/core/update.ts` | 129 | `aurora/update.py` | 🔲 TODO |
+### Phase 6: Config (368 lines)
 
-### ✅ Configurators (Tool Discovery)
+| Source File | Lines | Target File | Status | Key Items |
+|-------------|-------|-------------|--------|-----------|
+| `src/core/config.ts` | 41 | `aurora/config.py` | 🔲 TODO | `AURORA_MARKERS`, `AI_TOOLS` |
+| `src/core/config-schema.ts` | 231 | `aurora/config_schema.py` | 🔲 TODO | `GlobalConfigSchema`, nested utils |
+| `src/core/global-config.ts` | 137 | `aurora/global_config.py` | 🔲 TODO | XDG paths, load/save config |
 
-| Source File | Lines | Target File | Status |
-|-------------|-------|-------------|--------|
-| `src/core/configurators/registry.ts` | 49 | `aurora/configurators/registry.py` | 🔲 TODO |
-| `src/core/configurators/base.ts` | 5 | `aurora/configurators/base.py` | 🔲 TODO |
-| `src/core/configurators/claude.ts` | 22 | `aurora/configurators/claude.py` | 🔲 TODO |
-| `src/core/configurators/cline.ts` | 23 | `aurora/configurators/cline.py` | 🔲 TODO |
-| `src/core/configurators/agents.ts` | 23 | `aurora/configurators/agents.py` | 🔲 TODO |
-| Other configurators... | ~200 | `aurora/configurators/*.py` | 🔲 TODO |
+**Config Key Functions:**
+- `getGlobalConfigDir()` → `get_global_config_dir()`
+- `getGlobalDataDir()` → `get_global_data_dir()`
+- `getGlobalConfig()` → `get_global_config()`
+- `saveGlobalConfig()` → `save_global_config()`
+- `validateConfigKeyPath()` → `validate_config_key_path()`
+- `getNestedValue()` → `get_nested_value()`
+- `setNestedValue()` → `set_nested_value()`
 
-**Supported AI Tools (20+):**
-- Amazon Q Developer
-- Antigravity
-- Auggie (Augment CLI)
-- Claude Code
-- Cline
-- Codex
-- CodeBuddy
-- CoStrict
-- Crush
-- Cursor
-- Factory Droid
-- Gemini CLI
-- GitHub Copilot
-- iFlow
-- Kilo Code
-- OpenCode
-- Qoder
-- Qwen Code
-- RooCode
-- Windsurf
-- AGENTS.md standard
+### Phase 7: Configurators - Tool Detection (145 lines)
 
-### ✅ Templates
+| Source File | Lines | Target File | Status | Key Items |
+|-------------|-------|-------------|--------|-----------|
+| `src/core/configurators/base.ts` | 5 | `aurora/configurators/base.py` | 🔲 TODO | `ToolConfigurator` protocol |
+| `src/core/configurators/registry.ts` | 49 | `aurora/configurators/registry.py` | 🔲 TODO | `ToolRegistry` class |
+| `src/core/configurators/claude.ts` | 22 | `aurora/configurators/claude.py` | 🔲 TODO | Claude Code detection |
+| `src/core/configurators/cline.ts` | 23 | `aurora/configurators/cline.py` | 🔲 TODO | Cline detection |
+| `src/core/configurators/agents.ts` | 23 | `aurora/configurators/agents.py` | 🔲 TODO | AGENTS.md detection |
+| `src/core/configurators/codebuddy.ts` | 23 | `aurora/configurators/codebuddy.py` | 🔲 TODO | CodeBuddy detection |
 
-| Source File | Lines | Target File | Status |
-|-------------|-------|-------------|--------|
-| `src/core/templates/agents-template.ts` | 457 | `aurora/templates/agents.py` | 🔲 TODO |
-| `src/core/templates/project-template.ts` | 37 | `aurora/templates/project.py` | 🔲 TODO |
-| `src/core/templates/claude-template.ts` | 1 | `aurora/templates/claude.py` | 🔲 TODO |
-| `src/core/templates/cline-template.ts` | 1 | `aurora/templates/cline.py` | 🔲 TODO |
+### Phase 8: Templates (496 lines)
 
-### ✅ Utilities
+| Source File | Lines | Target File | Status | Key Items |
+|-------------|-------|-------------|--------|-----------|
+| `src/core/templates/index.ts` | 1 | `aurora/templates/__init__.py` | 🔲 TODO | Template exports |
+| `src/core/templates/agents-template.ts` | 457 | `aurora/templates/agents.py` | 🔲 TODO | AGENTS.md template |
+| `src/core/templates/project-template.ts` | 37 | `aurora/templates/project.py` | 🔲 TODO | Project template |
+| `src/core/templates/claude-template.ts` | 1 | `aurora/templates/claude.py` | 🔲 TODO | CLAUDE.md template |
 
-| Source File | Lines | Target File | Status |
-|-------------|-------|-------------|--------|
-| `src/utils/file-system.ts` | 209 | `aurora/utils/filesystem.py` | 🔲 TODO |
-| `src/utils/task-progress.ts` | 43 | `aurora/utils/progress.py` | 🔲 TODO |
-| `src/utils/item-discovery.ts` | 66 | `aurora/utils/discovery.py` | 🔲 TODO |
-| `src/utils/change-utils.ts` | 102 | `aurora/utils/plan_utils.py` | 🔲 TODO |
-| `src/core/converters/json-converter.ts` | 62 | `aurora/converters/json.py` | 🔲 TODO |
-| `src/core/config.ts` | 41 | `aurora/config.py` | 🔲 TODO |
+### Phase 9: Utilities (537 lines)
+
+| Source File | Lines | Target File | Status | Key Items |
+|-------------|-------|-------------|--------|-----------|
+| `src/utils/file-system.ts` | 209 | `aurora/utils/filesystem.py` | 🔲 TODO | File operations |
+| `src/utils/task-progress.ts` | 43 | `aurora/utils/progress.py` | 🔲 TODO | Progress tracking |
+| `src/utils/item-discovery.ts` | 66 | `aurora/utils/discovery.py` | 🔲 TODO | Find plans/capabilities |
+| `src/utils/change-utils.ts` | 102 | `aurora/utils/plan_utils.py` | 🔲 TODO | Plan helpers |
+| `src/utils/match.ts` | 26 | `aurora/utils/match.py` | 🔲 TODO | Fuzzy matching |
+| `src/utils/interactive.ts` | 29 | `aurora/utils/interactive.py` | 🔲 TODO | `is_interactive()` |
+| `src/utils/shell-detection.ts` | 62 | `aurora/utils/shell.py` | 🔲 TODO | Shell detection |
+| `src/core/converters/json-converter.ts` | 62 | `aurora/converters/json.py` | 🔲 TODO | JSON conversion |
+
+**Utils Key Functions:**
+- `findProjectRoot()` → `find_project_root()`
+- `readMarkdownFile()` → `read_markdown_file()`
+- `getActiveChangeIds()` → `get_active_plan_ids()`
+- `getSpecIds()` → `get_capability_ids()`
+- `nearestMatches()` → `nearest_matches()`
+- `isInteractive()` → `is_interactive()`
 
 ---
 
-## Skipped Modules
+## COMPLETE File Mapping: TO SKIP
 
-### ❌ Completions (Use Click Instead)
+### ❌ Completions (Use Click Instead) - ~1,537 lines
 
 | Source File | Lines | Reason |
 |-------------|-------|--------|
@@ -179,121 +186,139 @@ class Scenario(BaseModel):
 | `src/core/completions/completion-provider.ts` | 128 | Click handles this |
 | `src/core/completions/factory.ts` | 74 | Not needed |
 | `src/core/completions/types.ts` | 90 | Not needed |
-| `src/core/completions/generators/zsh-generator.ts` | 374 | Click provides this |
-| `src/core/completions/installers/zsh-installer.ts` | 507 | Click provides this |
-| **Total** | **~1,537** | |
+| `src/core/completions/generators/*.ts` | ~374 | Click provides this |
+| `src/core/completions/installers/*.ts` | ~507 | Click provides this |
 
-**Rationale:** Click provides shell completion for bash, zsh, and fish out of the box. OpenSpec's custom completion system is over-engineered for our needs.
+**Rationale:** Click provides shell completion for bash, zsh, and fish out of the box.
 
-### ❌ Artifact Graph (Experimental)
+### ❌ Artifact Graph (Experimental) - ~1,469 lines
 
 | Source File | Lines | Reason |
 |-------------|-------|--------|
-| `src/core/artifact-graph/graph.ts` | 167 | Experimental feature |
-| `src/core/artifact-graph/index.ts` | 42 | Not in core scope |
-| `src/core/artifact-graph/instruction-loader.ts` | 285 | Complex, revisit later |
-| `src/core/artifact-graph/resolver.ts` | 158 | Not needed now |
-| `src/core/artifact-graph/schema.ts` | 124 | Not needed now |
-| `src/core/artifact-graph/state.ts` | 64 | Not needed now |
-| `src/core/artifact-graph/types.ts` | 34 | Not needed now |
+| `src/core/artifact-graph/*.ts` | ~874 | Experimental workflow orchestration |
 | `src/commands/artifact-workflow.ts` | 595 | Experimental command |
-| **Total** | **~1,469** | |
 
-**Rationale:** Artifact-graph is a workflow orchestration system that's still experimental. Aurora has its own SOAR-based decomposition. May revisit later if useful.
+**Rationale:** Aurora has SOAR-based decomposition. May revisit later.
 
-### ❌ CLI Entry Point (Integrate into Aurora)
+### ❌ Slash Command Configurators - ~1,500 lines
+
+| Source File | Lines | Reason |
+|-------------|-------|--------|
+| `src/core/configurators/slash/*.ts` | ~1,500 | Very tool-specific slash commands |
+
+**Rationale:** These configure slash commands for specific tools. May port later if needed.
+
+### ❌ CLI Entry Point - 326 lines
 
 | Source File | Lines | Reason |
 |-------------|-------|--------|
 | `src/cli/index.ts` | 326 | Aurora has own main.py |
 
-**Rationale:** Aurora already has a CLI structure. We'll integrate commands into `aurora_cli/commands/`, not create a separate CLI.
+**Rationale:** Integrate into existing Aurora CLI.
 
-### ❌ Slash Command Configurators (Tool-Specific)
+### ❌ Index Re-exports - ~23 lines
 
 | Source File | Lines | Reason |
 |-------------|-------|--------|
-| `src/core/configurators/slash/*.ts` | ~1,500 | Very tool-specific |
-
-**Rationale:** These configure slash commands for specific tools (Claude, Cline, etc.). May port later if needed for Aurora's tool integration.
-
----
-
-## Tests Ported
-
-### ✅ Tests to Port
-
-| Test File | Lines | Status |
-|-----------|-------|--------|
-| `test/core/validation.test.ts` | ~500 | 🔲 TODO |
-| `test/core/parsers/markdown-parser.test.ts` | ~300 | 🔲 TODO |
-| `test/core/archive.test.ts` | ~400 | 🔲 TODO |
-| `test/core/init.test.ts` | ~300 | 🔲 TODO |
-| `test/core/list.test.ts` | ~200 | 🔲 TODO |
-| `test/core/view.test.ts` | ~200 | 🔲 TODO |
-| `test/core/config-schema.test.ts` | ~200 | 🔲 TODO |
-| `test/core/global-config.test.ts` | ~200 | 🔲 TODO |
-| `test/core/update.test.ts` | ~200 | 🔲 TODO |
-| `test/core/converters/*.test.ts` | ~150 | 🔲 TODO |
-| `test/utils/*.test.ts` | ~300 | 🔲 TODO |
-| `test/commands/*.test.ts` | ~500 | 🔲 TODO |
-| `test/cli-e2e/basic.test.ts` | ~300 | 🔲 TODO |
-
-### ❌ Tests Skipped
-
-| Test File | Lines | Reason |
-|-----------|-------|--------|
-| `test/core/completions/*.test.ts` | ~1,000 | Completions skipped |
-| `test/core/artifact-graph/*.test.ts` | ~1,500 | Artifact-graph skipped |
+| `src/index.ts` | 1 | Just re-exports |
+| `src/core/index.ts` | 1 | Just re-exports |
+| `src/core/schemas/index.ts` | 19 | Just re-exports |
+| `src/utils/index.ts` | 2 | Just re-exports |
 
 ---
 
-## Fixtures Used
+## Tests to Port
 
-### ✅ Fixtures to Use
-
-| Fixture | Purpose |
-|---------|---------|
-| `test/fixtures/` | Test data directory |
-| `openspec/specs/` | 20 real spec examples (dogfooding) |
-| `openspec/changes/` | Real change examples |
+| Test File | Target | Status |
+|-----------|--------|--------|
+| `test/core/validation.test.ts` | `tests/unit/validation/test_validator.py` | 🔲 TODO |
+| `test/core/parsers/markdown-parser.test.ts` | `tests/unit/parsers/test_markdown.py` | 🔲 TODO |
+| `test/core/archive.test.ts` | `tests/unit/commands/test_archive.py` | 🔲 TODO |
+| `test/core/init.test.ts` | `tests/unit/commands/test_init.py` | 🔲 TODO |
+| `test/core/list.test.ts` | `tests/unit/commands/test_list.py` | 🔲 TODO |
+| `test/core/view.test.ts` | `tests/unit/commands/test_view.py` | 🔲 TODO |
+| `test/core/update.test.ts` | `tests/unit/commands/test_update.py` | 🔲 TODO |
+| `test/core/config-schema.test.ts` | `tests/unit/test_config_schema.py` | 🔲 TODO |
+| `test/core/global-config.test.ts` | `tests/unit/test_global_config.py` | 🔲 TODO |
+| `test/core/converters/*.test.ts` | `tests/unit/converters/test_json.py` | 🔲 TODO |
+| `test/utils/*.test.ts` | `tests/unit/utils/test_*.py` | 🔲 TODO |
+| `test/commands/*.test.ts` | `tests/unit/cli/test_*_cmd.py` | 🔲 TODO |
+| `test/cli-e2e/basic.test.ts` | `tests/integration/test_cli_e2e.py` | 🔲 TODO |
 
 ---
 
-## Port Progress
+## Port Progress Tracking
 
-### Phase 0.5.1: Setup (Current)
+### Phase 0: Setup ✅ COMPLETE
 - [x] Fork OpenSpec repo
 - [x] Create `refactored` branch
 - [x] Create PORT_REPORT.md
-- [ ] Create Python package structure
+- [x] Create Python package structure
+- [x] Create tests/ structure
+- [x] Commit and push (8d83043, 532a40b)
 
-### Phase 0.5.2: Schemas (TDD)
-- [ ] Port tests for schemas
-- [ ] Implement Pydantic models
+### Phase 1: Schemas (TDD) 🔲 IN PROGRESS
+- [ ] 1.1 Port `base.schema.ts` → `aurora/schemas/base.py`
+- [ ] 1.2 Port `change.schema.ts` → `aurora/schemas/plan.py`
+- [ ] 1.3 Port `spec.schema.ts` → `aurora/schemas/capability.py`
 
-### Phase 0.5.3: Validation (TDD)
-- [ ] Port tests for validation
-- [ ] Implement Validator class
+### Phase 2: Validation (TDD) 🔲 TODO
+- [ ] 2.1 Port `constants.ts` → `aurora/validation/constants.py`
+- [ ] 2.2 Port `types.ts` → `aurora/validation/types.py`
+- [ ] 2.3 Port `validator.ts` → `aurora/validation/validator.py`
 
-### Phase 0.5.4: Parsers (TDD)
-- [ ] Port tests for parsers
-- [ ] Implement MarkdownParser, PlanParser, RequirementsParser
+### Phase 3: Parsers (TDD) 🔲 TODO
+- [ ] 3.1 Port `markdown-parser.ts` → `aurora/parsers/markdown.py`
+- [ ] 3.2 Port `change-parser.ts` → `aurora/parsers/plan.py`
+- [ ] 3.3 Port `requirement-blocks.ts` → `aurora/parsers/requirements.py`
 
-### Phase 0.5.5: Commands (TDD)
-- [ ] Port tests for commands
-- [ ] Implement archive, init, list, view, update
+### Phase 4: Core Commands (TDD) 🔲 TODO
+- [ ] 4.1 Port `archive.ts` → `aurora/commands/archive.py`
+- [ ] 4.2 Port `init.ts` → `aurora/commands/init.py`
+- [ ] 4.3 Port `list.ts` → `aurora/commands/list.py`
+- [ ] 4.4 Port `view.ts` → `aurora/commands/view.py`
+- [ ] 4.5 Port `update.ts` → `aurora/commands/update.py`
 
-### Phase 0.5.6: Configurators
-- [ ] Port tool registry
-- [ ] Port individual configurators
+### Phase 5: CLI Commands (TDD) 🔲 TODO
+- [ ] 5.1 Port `change.ts` → `aurora/cli/plan_cmd.py`
+- [ ] 5.2 Port `validate.ts` → `aurora/cli/validate_cmd.py`
+- [ ] 5.3 Port `spec.ts` → `aurora/cli/capability_cmd.py`
+- [ ] 5.4 Port `config.ts` → `aurora/cli/config_cmd.py`
+- [ ] 5.5 Port `show.ts` → `aurora/cli/show_cmd.py`
 
-### Phase 0.5.7: Templates
-- [ ] Port template generation
+### Phase 6: Config 🔲 TODO
+- [ ] 6.1 Port `config.ts` → `aurora/config.py`
+- [ ] 6.2 Port `config-schema.ts` → `aurora/config_schema.py`
+- [ ] 6.3 Port `global-config.ts` → `aurora/global_config.py`
 
-### Phase 0.5.8: Integration
-- [ ] Integrate into Aurora's planning module
-- [ ] Replace old Phase 1 code
+### Phase 7: Configurators 🔲 TODO
+- [ ] 7.1 Port `base.ts` → `aurora/configurators/base.py`
+- [ ] 7.2 Port `registry.ts` → `aurora/configurators/registry.py`
+- [ ] 7.3 Port individual tool configurators
+
+### Phase 8: Templates 🔲 TODO
+- [ ] 8.1 Port `agents-template.ts` → `aurora/templates/agents.py`
+- [ ] 8.2 Port `project-template.ts` → `aurora/templates/project.py`
+- [ ] 8.3 Port other templates
+
+### Phase 9: Utilities 🔲 TODO
+- [ ] 9.1 Port `file-system.ts` → `aurora/utils/filesystem.py`
+- [ ] 9.2 Port `task-progress.ts` → `aurora/utils/progress.py`
+- [ ] 9.3 Port `item-discovery.ts` → `aurora/utils/discovery.py`
+- [ ] 9.4 Port `change-utils.ts` → `aurora/utils/plan_utils.py`
+- [ ] 9.5 Port `match.ts` → `aurora/utils/match.py`
+- [ ] 9.6 Port `interactive.ts` → `aurora/utils/interactive.py`
+- [ ] 9.7 Port `shell-detection.ts` → `aurora/utils/shell.py`
+- [ ] 9.8 Port `json-converter.ts` → `aurora/converters/json.py`
+
+### Phase 10: Integration Tests 🔲 TODO
+- [ ] 10.1 Port E2E tests
+
+### Phase 11: Quality Assurance 🔲 TODO
+- [ ] 11.1 Run full test suite
+- [ ] 11.2 Type check (mypy)
+- [ ] 11.3 Lint (ruff)
+- [ ] 11.4 Coverage check
 
 ---
 
@@ -301,15 +326,16 @@ class Scenario(BaseModel):
 
 Before declaring port complete:
 
-- [ ] All ported tests pass (`pytest`)
-- [ ] Type checking passes (`mypy`)
-- [ ] Linting passes (`ruff`)
+- [ ] All ported tests pass (`pytest tests/ -v`)
+- [ ] Type checking passes (`mypy aurora/`)
+- [ ] Linting passes (`ruff check aurora/`)
 - [ ] Behavior matches OpenSpec for key operations:
   - [ ] `aurora plan init` ≈ `openspec init`
   - [ ] `aurora plan list` ≈ `openspec list`
   - [ ] `aurora plan validate` ≈ `openspec validate`
   - [ ] `aurora plan archive` ≈ `openspec archive`
-- [ ] Documentation updated
+- [ ] PORT_REPORT.md fully updated with ✅ status
+- [ ] Ready for integration into Aurora CLI
 
 ---
 
@@ -322,4 +348,5 @@ Before declaring port complete:
 
 ---
 
-*Last Updated: 2026-01-02*
+*Working Directory: `/tmp/openspec-source/`*
+*Branch: `refactored`*
