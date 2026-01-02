@@ -101,10 +101,10 @@
 | Source File | Lines | Target File | Status | Key Items |
 |-------------|-------|-------------|--------|-----------|
 | `src/core/archive.ts` | 625 | `aurora/commands/archive.py` | ✅ DONE (20 tests) | `ArchiveCommand.execute()` |
+| `src/core/update.ts` | 129 | `aurora/commands/update.py` | ✅ DONE (6 tests) | `UpdateCommand.execute()` - AGENTS.md only |
 | `src/core/init.ts` | 986 | `aurora/commands/init.py` | 🔲 TODO | `init_project()` |
 | `src/core/list.ts` | 193 | `aurora/commands/list.py` | 🔲 TODO | `list_items()` |
 | `src/core/view.ts` | 218 | `aurora/commands/view.py` | 🔲 TODO | `view_dashboard()` |
-| `src/core/update.ts` | 129 | `aurora/commands/update.py` | 🔲 TODO | `update_instructions()` |
 
 ### Phase 5: CLI Command Classes (1,240 lines)
 
@@ -144,12 +144,12 @@
 | `src/core/configurators/agents.ts` | 23 | `aurora/configurators/agents.py` | 🔲 TODO | AGENTS.md detection |
 | `src/core/configurators/codebuddy.ts` | 23 | `aurora/configurators/codebuddy.py` | 🔲 TODO | CodeBuddy detection |
 
-### Phase 8: Templates (496 lines)
+### Phase 8: Templates (496 lines) - PARTIAL
 
 | Source File | Lines | Target File | Status | Key Items |
 |-------------|-------|-------------|--------|-----------|
-| `src/core/templates/index.ts` | 1 | `aurora/templates/__init__.py` | 🔲 TODO | Template exports |
-| `src/core/templates/agents-template.ts` | 457 | `aurora/templates/agents.py` | 🔲 TODO | AGENTS.md template |
+| `src/core/templates/index.ts` | 1 | `aurora/templates/__init__.py` | ✅ DONE | Template exports |
+| `src/core/templates/agents-template.ts` | 457 | `aurora/templates/agents.py` | ✅ DONE | AGENTS.md template (full 457 lines) |
 | `src/core/templates/project-template.ts` | 37 | `aurora/templates/project.py` | 🔲 TODO | Project template |
 | `src/core/templates/claude-template.ts` | 1 | `aurora/templates/claude.py` | 🔲 TODO | CLAUDE.md template |
 
