@@ -59,17 +59,17 @@
 
 | Source File | Lines | Target File | Status | Key Items |
 |-------------|-------|-------------|--------|-----------|
-| `src/core/schemas/base.schema.ts` | 19 | `aurora/schemas/base.py` | 🔲 TODO | `Scenario`, `Requirement` |
-| `src/core/schemas/change.schema.ts` | 41 | `aurora/schemas/plan.py` | 🔲 TODO | `ModificationOperation`, `Modification`, `Plan` |
-| `src/core/schemas/spec.schema.ts` | 16 | `aurora/schemas/capability.py` | 🔲 TODO | `Capability` |
+| `src/core/schemas/base.schema.ts` | 19 | `aurora/schemas/base.py` | ✅ DONE | `Scenario`, `Requirement` |
+| `src/core/schemas/change.schema.ts` | 41 | `aurora/schemas/plan.py` | ✅ DONE | `ModificationOperation`, `Modification`, `Plan` |
+| `src/core/schemas/spec.schema.ts` | 16 | `aurora/schemas/capability.py` | ✅ DONE | `Capability` |
 
-### Phase 2: Validation (515 lines)
+### Phase 2: Validation (515 lines) ✅ COMPLETE
 
 | Source File | Lines | Target File | Status | Key Items |
 |-------------|-------|-------------|--------|-----------|
-| `src/core/validation/constants.ts` | 48 | `aurora/validation/constants.py` | 🔲 TODO | `VALIDATION_MESSAGES`, thresholds |
-| `src/core/validation/types.ts` | 18 | `aurora/validation/types.py` | 🔲 TODO | `ValidationIssue`, `ValidationReport` |
-| `src/core/validation/validator.ts` | 449 | `aurora/validation/validator.py` | 🔲 TODO | `Validator` class |
+| `src/core/validation/constants.ts` | 48 | `aurora/validation/constants.py` | ✅ DONE | `VALIDATION_MESSAGES`, thresholds |
+| `src/core/validation/types.ts` | 18 | `aurora/validation/types.py` | ✅ DONE | `ValidationIssue`, `ValidationReport` |
+| `src/core/validation/validator.ts` | 449 | `aurora/validation/validator.py` | ✅ DONE | `Validator` class |
 
 **Validator Key Functions:**
 - `validateSpec()` → `validate_capability()`
@@ -96,11 +96,11 @@
 - `extractRequirementsSection()` → `extract_requirements_section()`
 - `normalizeRequirementName()` → `normalize_requirement_name()`
 
-### Phase 4: Core Commands (2,151 lines)
+### Phase 4: Core Commands (2,151 lines) - IN PROGRESS
 
 | Source File | Lines | Target File | Status | Key Items |
 |-------------|-------|-------------|--------|-----------|
-| `src/core/archive.ts` | 625 | `aurora/commands/archive.py` | 🔲 TODO | `archive_plan()` |
+| `src/core/archive.ts` | 625 | `aurora/commands/archive.py` | ✅ DONE (20 tests) | `ArchiveCommand.execute()` |
 | `src/core/init.ts` | 986 | `aurora/commands/init.py` | 🔲 TODO | `init_project()` |
 | `src/core/list.ts` | 193 | `aurora/commands/list.py` | 🔲 TODO | `list_items()` |
 | `src/core/view.ts` | 218 | `aurora/commands/view.py` | 🔲 TODO | `view_dashboard()` |
@@ -257,20 +257,20 @@
 - [x] Create tests/ structure
 - [x] Commit and push (8d83043, 532a40b)
 
-### Phase 1: Schemas (TDD) 🔲 IN PROGRESS
-- [ ] 1.1 Port `base.schema.ts` → `aurora/schemas/base.py`
-- [ ] 1.2 Port `change.schema.ts` → `aurora/schemas/plan.py`
-- [ ] 1.3 Port `spec.schema.ts` → `aurora/schemas/capability.py`
+### Phase 1: Schemas (TDD) ✅ COMPLETE (23 tests)
+- [x] 1.1 Port `base.schema.ts` → `aurora/schemas/base.py`
+- [x] 1.2 Port `change.schema.ts` → `aurora/schemas/plan.py`
+- [x] 1.3 Port `spec.schema.ts` → `aurora/schemas/capability.py`
 
-### Phase 2: Validation (TDD) 🔲 TODO
-- [ ] 2.1 Port `constants.ts` → `aurora/validation/constants.py`
-- [ ] 2.2 Port `types.ts` → `aurora/validation/types.py`
-- [ ] 2.3 Port `validator.ts` → `aurora/validation/validator.py`
+### Phase 2: Validation (TDD) ✅ COMPLETE (23 tests)
+- [x] 2.1 Port `constants.ts` → `aurora/validation/constants.py`
+- [x] 2.2 Port `types.ts` → `aurora/validation/types.py`
+- [x] 2.3 Port `validator.ts` → `aurora/validation/validator.py` (786 lines)
 
-### Phase 3: Parsers (TDD) 🔲 TODO
-- [ ] 3.1 Port `markdown-parser.ts` → `aurora/parsers/markdown.py`
-- [ ] 3.2 Port `change-parser.ts` → `aurora/parsers/plan.py`
-- [ ] 3.3 Port `requirement-blocks.ts` → `aurora/parsers/requirements.py`
+### Phase 3: Parsers (TDD) ✅ COMPLETE (36 tests)
+- [x] 3.1 Port `markdown-parser.ts` → `aurora/parsers/markdown.py`
+- [x] 3.2 Port `change-parser.ts` → `aurora/parsers/plan_parser.py`
+- [x] 3.3 Port `requirement-blocks.ts` → `aurora/parsers/requirements.py`
 
 ### Phase 4: Core Commands (TDD) 🔲 TODO
 - [ ] 4.1 Port `archive.ts` → `aurora/commands/archive.py`
